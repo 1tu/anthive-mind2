@@ -1,4 +1,4 @@
-import { Area } from '../index';
+import { Area } from '..';
 import { Mind } from '../Mind/Mind';
 
 export class Mother {

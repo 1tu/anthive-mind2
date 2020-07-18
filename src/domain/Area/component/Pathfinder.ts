@@ -80,7 +80,7 @@ export class Pathfinder {
   }
 
   public canWalkHere(x: number, y: number) {
-    return this._mother.area.cellGet({ x, y }).isFree;
+    return this._mother.area.cellGet({ x, y }).isWalkable;
   }
 
   find(start: MArea.IPoint, end: MArea.IPoint) {

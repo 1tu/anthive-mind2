@@ -1,8 +1,10 @@
-import { Cell } from './component/Cell';
-import { Mother } from '../index';
-import { Ant } from '../Mind/Ant/Ant';
 import flatten from 'lodash/flatten';
 import { computed, observable } from 'mobx';
+
+import { Mother } from '..';
+import { Ant, EAntGoal } from '../Mind/Ant/Ant';
+import { Cell } from './component/Cell';
+import { Pathfinder } from './component/Pathfinder';
 
 export class Area {
   public static pathDiff(current: MArea.IPoint, target: MArea.IPoint): MArea.IPoint {
@@ -13,6 +15,8 @@ export class Area {
   @computed public get list() {
     return flatten(this.matrix);
   }
+
+  public pathfinder = new Pathfinder(this._mother);
   public size: MArea.ISize = {
     width: 0,
     height: 0,
@@ -21,10 +25,10 @@ export class Area {
   private _isInit = false;
 
   @computed public get cellListFood() {
-    return this.list.filter(c => c.isFoodFree && !c.targetBy);
+    return this.list.filter((c) => c.isFoodFree);
   }
   @computed public get cellListHive() {
-    return this.list.filter(c => c.isHiveMy);
+    return this.list.filter((c) => c.isHiveMy);
   }
 
   constructor(private _mother: Mother) {}
@@ -35,17 +39,29 @@ export class Area {
   }
 
   targetClosest(ant: Ant) {
-    if (ant.goal === MAnt.EGoal.FOOD_TAKE) {
-      const lenList = this.cellListFood.map(c => ant.pathLen(c.point));
-      this.cellListFood[lenList.indexOf(Math.max(...lenList))].targetBy = ant;
-    } else if (ant.goal === MAnt.EGoal.FOOD_HOME) {
-      const lenList = this.cellListHive.map(c => ant.pathLen(c.point));
+    if (ant.goal === EAntGoal.FOOD_TAKE) {
+      if (!this.cellListFood) return;
+      const lenList = this.cellListFood.map((c) => ant.pathLen(c.point));
+      while (lenList.length) {
+        const index = lenList.indexOf(Math.max(...lenList));
+        const cell = this.cellListFood[index];
+        cell.targetBy = ant;
+        if (ant.targetMove) break;
+        cell.targetBy = undefined;
+        lenList.splice(index, 1);
+      }
+    } else if (ant.goal === EAntGoal.FOOD_HOME) {
+      const lenList = this.cellListHive.map((c) => ant.pathLen(c.point));
       this.cellListHive[lenList.indexOf(Math.max(...lenList))].targetBy = ant;
     }
   }
 
   cellGet(point: MArea.IPoint) {
     return this.matrix[point.y][point.x];
+  }
+
+  pointValid(point: MArea.IPoint) {
+    return 0 <= point.x && point.x < this.size.width && 0 <= point.y && point.y < this.size.height;
   }
 
   private _init(map: MGame.IMap) {
@@ -66,10 +82,10 @@ export class Area {
   private _fillMatrix(input: MGame.ICell[][]) {
     for (let y = 0; y < this.size.height; y++) {
       const rowOut: Cell[] = [];
-      this.matrix.push(rowOut);
       for (let x = 0; x < this.size.width; x++) {
         rowOut.push(new Cell(this._mother, { x, y }, input[y][x]));
       }
+      this.matrix.push(rowOut);
     }
   }
 }

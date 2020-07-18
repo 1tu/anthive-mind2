@@ -5,6 +5,7 @@ import { observable, action, computed } from 'mobx';
 
 export class Mind {
   private _isInit = false;
+
   @observable public dict: { [id: string]: Ant } = {};
   @computed public get list() {
     return Object.values(this.dict);
@@ -18,10 +19,11 @@ export class Mind {
   }
 
   public getActions() {
-    return this.list.map(ant => {
+    return this.list.reduce((acc, ant) => {
       if (!ant.targetPoint) this._mother.area.targetClosest(ant);
-      return ant.action;
-    });
+      acc[ant.id] = ant.action.toJSON();
+      return acc;
+    }, {} as any);
   }
 
   private _init(list: MGame.IAntList) {
@@ -39,7 +41,7 @@ export class Mind {
       else this.dict[antId] = new Ant(this._mother, antId, antIn);
     }
     const listRemoveId = difference(Object.keys(this.dict), listInId);
-    listRemoveId.forEach(id => delete this.dict[id]);
+    listRemoveId.forEach((id) => delete this.dict[id]);
   }
 
   @action

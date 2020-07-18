@@ -1,8 +1,14 @@
 import { action, computed, observable } from 'mobx';
-import { Cell, Area, Action, Mother } from '../..';
+import { Cell, Area, Action, Mother, EActionType } from '../..';
+import isEqual from 'lodash/isEqual';
 
 const PAYLOAD_MAX = 9;
 const HEALTH_MAX = 9;
+
+export enum EAntGoal {
+  FOOD_TAKE,
+  FOOD_HOME,
+}
 
 export class Ant {
   @observable health: number;
@@ -13,11 +19,11 @@ export class Ant {
   }
   public set payload(value: number) {
     this._payload = value;
-    if (this._payload === PAYLOAD_MAX) this.goal = MAnt.EGoal.FOOD_HOME;
-    else if (this._payload === 0) this.goal = MAnt.EGoal.FOOD_TAKE;
+    if (this._payload === PAYLOAD_MAX) this.goal = EAntGoal.FOOD_HOME;
+    else if (this._payload === 0) this.goal = EAntGoal.FOOD_TAKE;
   }
 
-  @observable.ref point: MArea.IPoint = {
+  @observable point: MArea.IPoint = {
     x: undefined,
     y: undefined,
   };
@@ -26,7 +32,7 @@ export class Ant {
     return this._mother.area.cellGet(this.point);
   }
 
-  @observable public goal = MAnt.EGoal.FOOD_TAKE;
+  @observable public goal = EAntGoal.FOOD_TAKE;
 
   @observable public targetPoint?: MArea.IPoint;
   @computed public get targetCell(): Cell {
@@ -52,15 +58,18 @@ export class Ant {
     ];
     const xPrior = Math.abs(x) >= Math.abs(y);
     const moveList: MArea.IPoint[] = [xPrior ? temp.shift() : temp.pop(), temp.pop(), tempMirror.pop(), tempMirror.pop()];
-    return moveList.find((d) => this._mother.area.cellGet({ x: this.point.x + d.x, y: this.point.y + d.y }).isFree);
+    return moveList.find((d) => {
+      const point = { x: this.point.x + d.x, y: this.point.y + d.y };
+      return isEqual(point, this.targetPoint) || this._mother.area.pointValid(point) && this._mother.area.cellGet(point).isWalkable;
+    });
   }
 
   @computed public get action() {
-    if (this.health < HEALTH_MAX / 2 && this.payload) return new Action(MAction.EType.EAT);
-    else if (this.goal === MAnt.EGoal.FOOD_TAKE) {
-      return new Action(this.targetMoveCount ? MAction.EType.MOVE : MAction.EType.LOAD, this.targetMove);
-    } else if (this.goal === MAnt.EGoal.FOOD_HOME) {
-      return new Action(this.targetMoveCount ? MAction.EType.MOVE : MAction.EType.UNLOAD, this.targetMove);
+    if (this.health < HEALTH_MAX / 2 && this.payload) return new Action(EActionType.EAT);
+    else if (this.goal === EAntGoal.FOOD_TAKE) {
+      return new Action(this.targetMoveCount ? EActionType.MOVE : EActionType.LOAD, this.targetMove);
+    } else if (this.goal === EAntGoal.FOOD_HOME) {
+      return new Action(this.targetMoveCount ? EActionType.MOVE : EActionType.UNLOAD, this.targetMove);
     }
   }
 
@@ -75,7 +84,7 @@ export class Ant {
   }
 
   @action goalUpdate() {
-    this.goal = this.payload !== PAYLOAD_MAX ? MAnt.EGoal.FOOD_TAKE : MAnt.EGoal.FOOD_HOME;
+    this.goal = this.payload !== PAYLOAD_MAX ? EAntGoal.FOOD_TAKE : EAntGoal.FOOD_HOME;
   }
 
   pathLen(target: MArea.IPoint) {

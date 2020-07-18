@@ -1,11 +1,11 @@
 {
   "name": "anthive-mind",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "itu ant-mother",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack -p --config=webpack.config.js"
+    "start": "webpack-dev-server --config=webpack/dev.js",
+    "build": "webpack -p --config=webpack/prod.js"
   },
   "repository": {
     "type": "git",
@@ -30,10 +30,13 @@
     "@types/lodash": "^4.14.157",
     "@types/node": "^14.0.23",
     "babel-loader": "^8.1.0",
+    "html-webpack-plugin": "^4.3.0",
     "ts-loader": "^7.0.0",
     "typescript": "^3.8.3",
     "webpack": "^4.43.0",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-merge": "^5.0.9"
   },
   "dependencies": {
     "lodash": "^4.17.19",

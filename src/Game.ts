@@ -1,6 +1,18 @@
 import * as http from 'http';
 import { Mother } from './domain/Mother/Mother';
 
+export enum EGameEvent {
+  NONE = 'no_action',
+  BIRTH = 'birth',
+  DEATH = 'death',
+  SLOW = 'slow',
+
+  ERROR = 'error',
+  ERROR_MOVE = 'bad_move',
+  ERROR_UNLOAD = 'bad_unload',
+  ERROR_EAT = 'bad_eat',
+}
+
 export class Game {
   private _mother = new Mother();
   private _server: http.Server;
@@ -20,7 +32,7 @@ export class Game {
             try {
               const data = JSON.parse(body);
 
-              const response = this._handleData(data);
+              const response = this.handleData(data);
               res.end(JSON.stringify(response));
               console.log('Tick:', data.tick, response);
             } catch (error) {
@@ -35,7 +47,7 @@ export class Game {
       .listen(port);
   }
 
-  private _handleData(data: MGame.IInput) {
+  public handleData(data: MGame.IInput) {
     return this._mother.input(data);
   }
 }
