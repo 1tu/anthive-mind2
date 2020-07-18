@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "noImplicitAny": true,
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "target": "ESNext",
+
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "declaration": true,
+    "noEmitHelpers": true,
+    "importHelpers": true,
+  },
+  "exclude": ["node_modules"]
+}
