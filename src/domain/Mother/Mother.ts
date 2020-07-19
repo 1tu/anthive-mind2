@@ -1,5 +1,6 @@
-import { Area } from '..';
-import { Mind } from '../Mind/Mind';
+import { IInput } from '@domain/Game';
+import { Area } from '@domain/Area';
+import { Mind } from '@domain/Mind';
 
 export class Mother {
   public tick = 0;
@@ -10,7 +11,7 @@ export class Mother {
   area = new Area(this);
   mind = new Mind(this);
 
-  input(data: MGame.IInput) {
+  input(data: IInput) {
     if (!this._isInit) {
       this.id = data.id;
       this._isInit = true;

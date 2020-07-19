@@ -1,2 +1,5 @@
+export * from './Area.types';
 export * from './Area';
-export * from './component/Cell';
+export * from './Cell';
+export * from './Point';
+export * from './Pathfinder';

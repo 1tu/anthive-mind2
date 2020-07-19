@@ -1,39 +1,45 @@
 import { computed } from 'mobx';
-import { Mother } from '../..';
+import { IPointState } from '@domain/Area';
+import { Mother } from '@domain/Mother';
 
 export class Pathfinder {
+  public static vector(current: IPointState, target: IPointState): IPointState {
+    return { x: target.x - current.x, y: target.y - current.y };
+  }
+
   // linear movement - no diagonals - just cardinal directions (NSEW)
-  public static manhattanDistance(point: MArea.IPoint, goal: MArea.IPoint) {
-    return Math.abs(point.x - goal.x) + Math.abs(point.y - goal.y);
+  public static manhattanDistance(current: IPointState, target: IPointState) {
+    const { x, y } = Pathfinder.vector(current, target);
+    return Math.abs(x) + Math.abs(y);
   }
 
   // diagonal movement - assumes diag dist is 1, same as cardinals
-  public static diagonalDistance(point: MArea.IPoint, goal: MArea.IPoint) {
-    return Math.max(Math.abs(point.x - goal.x), Math.abs(point.y - goal.y));
+  public static diagonalDistance(current: IPointState, target: IPointState) {
+    const { x, y } = Pathfinder.vector(current, target);
+    return Math.max(Math.abs(x), Math.abs(y));
   }
 
   // diagonals are considered a little farther than cardinal directions
   // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
   // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
-  public static euclideanDistance(point: MArea.IPoint, goal: MArea.IPoint) {
-    return Math.sqrt(Math.pow(point.x - goal.x, 2) + Math.pow(point.y - goal.y, 2));
+  public static euclideanDistance(current: IPointState, target: IPointState) {
+    const { x, y } = Pathfinder.vector(current, target);
+    return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 
   @computed public get height() {
     return this._mother.area.size.height;
   }
-
   @computed public get width() {
     return this._mother.area.size.width;
   }
-
   @computed public get size() {
     return this.width * this.height;
   }
 
   constructor(private _mother: Mother) {}
 
-  public neighbours(x: number, y: number) {
+  public neighbours({ x, y }: IPointState): IPointState[] {
     const N = y - 1,
       S = y + 1,
       E = x + 1,
@@ -80,10 +86,15 @@ export class Pathfinder {
   }
 
   public canWalkHere(x: number, y: number) {
-    return this._mother.area.cellGet({ x, y }).isWalkable;
+    const cell = this._mother.area.cellGet({ x, y });
+    return cell?.isWalkable;
   }
 
-  find(start: MArea.IPoint, end: MArea.IPoint) {
+  public pointValid(point: IPointState) {
+    return 0 <= point.x && point.x < this.width && 0 <= point.y && point.y < this.height;
+  }
+
+  find(start: IPointState, end: IPointState) {
     var distanceFunction = Pathfinder.manhattanDistance;
 
     var mypathStart = new Node(null, start, this.width);
@@ -91,7 +102,7 @@ export class Pathfinder {
     var AStar = new Array(this.size);
     var Open: Node[] = [mypathStart];
     var Closed: Node[] = [];
-    var result: MArea.IPoint[] = [];
+    var result: IPointState[] = [];
     var myNeighbours;
     var myNode;
     var myPath;
@@ -120,7 +131,7 @@ export class Pathfinder {
         result.reverse();
       } else {
         // find which nearby nodes are walkable
-        myNeighbours = this.neighbours(myNode.point.x, myNode.point.y);
+        myNeighbours = this.neighbours(myNode.point);
         // test each one that hasn't been tried already
         for (i = 0, j = myNeighbours.length; i < j; i++) {
           myPath = new Node(myNode, myNeighbours[i], this.width);
@@ -148,7 +159,7 @@ class Node {
   f = 0;
   g = 0;
 
-  constructor(public parent: Node, public point: MArea.IPoint, width: number) {
+  constructor(public parent: Node, public point: IPointState, width: number) {
     this.value = point.y * width + point.x;
   }
 }

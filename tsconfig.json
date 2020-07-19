@@ -13,6 +13,10 @@
     "declaration": true,
     "noEmitHelpers": true,
     "importHelpers": true,
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": ["src/domain/*"]
+    }
   },
   "exclude": ["node_modules"]
 }

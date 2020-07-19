@@ -1,12 +1,19 @@
 // shared config (dev and prod)
-const { resolve } = require('path');
+const { resolve, join } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+function fromRoot(p) {
+  return join(__dirname, '..', p);
+}
+
 const rv = {
+  context: resolve(__dirname, '../src'),
   resolve: {
     extensions: ['.ts', '.js'],
+    alias: {
+      '@domain': resolve(__dirname, '../src/domain'),
+    },
   },
-  context: resolve(__dirname, '../src'),
   module: {
     rules: [
       {
