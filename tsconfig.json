@@ -15,7 +15,8 @@
     "importHelpers": true,
     "baseUrl": ".",
     "paths": {
-      "@domain/*": ["src/domain/*"]
+      "@domain/*": ["src/domain/*"],
+      "@common/*": ["src/common/*"]
     }
   },
   "exclude": ["node_modules"]

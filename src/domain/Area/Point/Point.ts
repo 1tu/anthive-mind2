@@ -1,6 +1,6 @@
 import { IPointState } from '@domain/Area';
 import { action, observable } from 'mobx';
-import { EDirection } from '@domain/Action';
+import { EActionDirection } from '@domain/Action';
 
 export class Point implements IPointState {
   @observable x: number;
@@ -15,8 +15,8 @@ export class Point implements IPointState {
     this.y = point.y;
   }
 
-  get direction(): EDirection | undefined {
-    return Math.abs(this.x) > Math.abs(this.y) ? (this.x > 0 ? EDirection.RIGHT : EDirection.LEFT) : this.y > 0 ? EDirection.DOWN : EDirection.UP;
+  get direction(): EActionDirection | undefined {
+    return Math.abs(this.x) > Math.abs(this.y) ? (this.x > 0 ? EActionDirection.RIGHT : EActionDirection.LEFT) : this.y > 0 ? EActionDirection.DOWN : EActionDirection.UP;
   }
 
   equal(point: IPointState) {

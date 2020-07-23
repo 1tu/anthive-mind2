@@ -3,18 +3,18 @@ import { IPointState } from '@domain/Area';
 import { Mother } from '@domain/Mother';
 
 export class Pathfinder {
-  public static vector(current: IPointState, target: IPointState): IPointState {
+  static vector(current: IPointState, target: IPointState): IPointState {
     return { x: target.x - current.x, y: target.y - current.y };
   }
 
   // linear movement - no diagonals - just cardinal directions (NSEW)
-  public static manhattanDistance(current: IPointState, target: IPointState) {
+  static manhattanDistance(current: IPointState, target: IPointState) {
     const { x, y } = Pathfinder.vector(current, target);
     return Math.abs(x) + Math.abs(y);
   }
 
   // diagonal movement - assumes diag dist is 1, same as cardinals
-  public static diagonalDistance(current: IPointState, target: IPointState) {
+  static diagonalDistance(current: IPointState, target: IPointState) {
     const { x, y } = Pathfinder.vector(current, target);
     return Math.max(Math.abs(x), Math.abs(y));
   }
@@ -22,24 +22,24 @@ export class Pathfinder {
   // diagonals are considered a little farther than cardinal directions
   // diagonal movement using Euclide (AC = sqrt(AB^2 + BC^2))
   // where AB = x2 - x1 and BC = y2 - y1 and AC will be [x3, y3]
-  public static euclideanDistance(current: IPointState, target: IPointState) {
+  static euclideanDistance(current: IPointState, target: IPointState) {
     const { x, y } = Pathfinder.vector(current, target);
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
   }
 
-  @computed public get height() {
+  @computed get height() {
     return this._mother.area.size.height;
   }
-  @computed public get width() {
+  @computed get width() {
     return this._mother.area.size.width;
   }
-  @computed public get size() {
+  @computed get size() {
     return this.width * this.height;
   }
 
-  constructor(private _mother: Mother) {}
+  constructor(private _mother: Mother) { }
 
-  public neighbours({ x, y }: IPointState): IPointState[] {
+  neighbours({ x, y }: IPointState): IPointState[] {
     const N = y - 1,
       S = y + 1,
       E = x + 1,
@@ -58,7 +58,7 @@ export class Pathfinder {
   }
 
   // можно ходить по диагонали НО проскакивать сквозь щели по диагонали НЕЛЬЗЯ
-  public diagonalNeighbours(myN: number, myS: number, myE: number, myW: number, N: number, S: number, E: number, W: number) {
+  diagonalNeighbours(myN: number, myS: number, myE: number, myW: number, N: number, S: number, E: number, W: number) {
     if (myN) {
       if (myE && this.canWalkHere(E, N)) return { x: E, y: N };
       if (myW && this.canWalkHere(W, N)) return { x: W, y: N };
@@ -70,7 +70,7 @@ export class Pathfinder {
   }
 
   // можно ходить по диагонали и проскакивать сквозь щели по диагонали
-  public diagonalNeighboursFree(N: number, S: number, E: number, W: number) {
+  diagonalNeighboursFree(N: number, S: number, E: number, W: number) {
     const myN = N > -1;
     const myS = S < this.height;
     const myE = E < this.width;
@@ -85,12 +85,12 @@ export class Pathfinder {
     }
   }
 
-  public canWalkHere(x: number, y: number) {
+  canWalkHere(x: number, y: number) {
     const cell = this._mother.area.cellGet({ x, y });
     return cell?.isWalkable;
   }
 
-  public pointValid(point: IPointState) {
+  pointValid(point: IPointState) {
     return 0 <= point.x && point.x < this.width && 0 <= point.y && point.y < this.height;
   }
 

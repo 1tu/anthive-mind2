@@ -1,41 +1,26 @@
-import { Cell, Point, TAntId, Pathfinder } from '@domain/Area';
+import { Cell, Point, TAntId } from '@domain/Area';
 import { IAnt } from '@domain/Game';
-import { EGoal } from '@domain/Mind';
-import { Goal } from '@domain/Mind/Goal';
 import { Mother } from '@domain/Mother';
 import { action, computed, observable } from 'mobx';
-
-const PAYLOAD_MAX = 9;
-const HEALTH_MAX = 9;
+import { GoalFeed } from '@domain/Mind/Goal/GoalFeed';
+import { GoalGrow } from '@domain/Mind/Goal/GoalGrow';
+import { IGoal } from '@domain/Mind/Goal';
 
 export class Ant {
-  public readonly goal: Goal;
-
-  @observable point: Point;
-
-  @observable private _health: number;
-  @computed public get health(): number {
-    return this._health;
-  }
-  public set health(value: number) {
-    this._health = value;
-    if (value < HEALTH_MAX / 2) this.goal.type = EGoal.FOOD_EAT;
-    else if (value === HEALTH_MAX) this.payload = this._payload;
+  private _goal: IGoal;
+  @computed get goal(): IGoal {
+    this._goal?.dispose();
+    if (GoalFeed.NEED(this.health, this._mother.config.HEALTH_MAX)) this._goal = new GoalFeed(this._mother, this);
+    else this._goal = new GoalGrow(this._mother, this);
+    return this._goal;
   }
 
-  @observable private _payload: number;
-  @computed public get payload(): number {
-    return this._payload;
-  }
+  point: Point;
+  @observable health: number;
+  @observable payload: number;
 
-  @computed public get canWalk() {
+  @computed get canWalk() {
     return !!this._mother.area.pathfinder.neighbours(this.point).length;
-  }
-
-  public set payload(value: number) {
-    this._payload = value;
-    if (this._payload === PAYLOAD_MAX) this.goal.type = EGoal.FOOD_HOME;
-    else if (this._payload === 0) this.goal.type = EGoal.FOOD_TAKE;
   }
 
   @computed get cell(): Cell {
@@ -43,18 +28,13 @@ export class Ant {
   }
 
   constructor(private _mother: Mother, public id: TAntId, ant: IAnt) {
-    this.point = new Point({ x: ant.x, y: ant.y });
-    this.goal = new Goal(this._mother, this);
+    this.point = new Point(ant);
     this.update(ant);
   }
 
   @action update(ant: IAnt) {
-    this.point.update({ x: ant.x, y: ant.y });
+    this.point.update(ant);
     this.payload = ant.payload;
     this.health = ant.health;
   }
-
-  public distanceCalc = (cell: Cell) => {
-    return Pathfinder.manhattanDistance(this.point, cell.point);
-  };
 }

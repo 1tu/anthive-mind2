@@ -1,5 +1,8 @@
 import { Mother } from '@domain/Mother';
 import { IInput } from '@domain/Game';
+import { configure } from 'mobx';
+
+configure({ computedRequiresReaction: true });
 
 export enum EGameEvent {
   NONE = 'no_action',
@@ -48,7 +51,7 @@ export class Game {
     }
   }
 
-  public handleData = (data: IInput) => {
+  handleData = (data: IInput) => {
     return this._mother.input(data);
   };
 }

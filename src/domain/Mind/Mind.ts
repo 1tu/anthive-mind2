@@ -1,18 +1,49 @@
-import difference from 'lodash/difference';
-import { action, computed, observable } from 'mobx';
-import { Ant } from '@domain/Mind';
-import { Mother } from '@domain/Mother';
 import { IAntList } from '@domain/Game';
+import { Ant, TActionList } from '@domain/Mind';
+import { Mother } from '@domain/Mother';
+import difference from 'lodash/difference';
+import { action, autorun, computed, observable } from 'mobx';
 
 export class Mind {
   private _isInit = false;
+  actionList: TActionList = {};
 
   @observable public dict: { [id: string]: Ant } = {};
   @computed public get list() {
     return Object.values(this.dict);
   }
 
-  constructor(private _mother: Mother) {}
+  @computed get goalList() {
+    return this.list.map((a) => a.goal);
+  }
+
+  @computed get actionListComputed() {
+    const result: TActionList = {};
+    const list = [...this.list];
+    let i = 0;
+    while (list.length) {
+      const ant = list[i];
+      const action = ant.goal.action;
+      if (action) {
+        result[ant.id] = action.toJSON();
+        list.splice(i, 1);
+      } else i = i >= list.length ? 0 : i + 1;
+    }
+    return result;
+
+    // return this.list.reduce((acc, ant) => {
+    //   acc[ant.id] = ant.goal.action.toJSON();
+    //   return acc;
+    // }, {} as any);
+  }
+
+  constructor(private _mother: Mother) {
+    autorun(() => {
+      this.actionList = this.actionListComputed;
+      console.log('NEW ACTIONS');
+
+    });
+  }
 
   input(list: IAntList) {
     if (!this._isInit) this._init(list);
@@ -20,10 +51,23 @@ export class Mind {
   }
 
   public getActions() {
-    return this.list.reduce((acc, ant) => {
-      acc[ant.id] = ant.goal.action.toJSON();
-      return acc;
-    }, {} as any);
+    const result: TActionList = {};
+    const list = [...this.list];
+    let i = 0;
+    while (list.length) {
+      const ant = list[i];
+      const action = ant.goal.action;
+      if (action) {
+        result[ant.id] = action.toJSON();
+        list.splice(i, 1);
+      } else i = i >= list.length ? 0 : i + 1;
+    }
+    return result;
+
+    // return this.list.reduce((acc, ant) => {
+    //   acc[ant.id] = ant.goal.action.toJSON();
+    //   return acc;
+    // }, {} as any);
   }
 
   private _init(list: IAntList) {

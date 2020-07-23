@@ -1,6 +1,8 @@
-export class CM implements ICell {
-  ant?: TInputPlayerVariant;
-  hive?: TInputPlayerVariant;
+import { TAntVariant, TPlayerVariant } from '@domain/Area';
+
+export class CM {
+  ant?: TAntVariant;
+  hive?: TPlayerVariant;
   food?: number;
 
   constructor(food?: number, ant?: number, hive?: number) {

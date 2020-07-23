@@ -3,13 +3,18 @@ import { Area } from '@domain/Area';
 import { Mind } from '@domain/Mind';
 
 export class Mother {
-  public tick = 0;
-  public id!: string;
+  tick = 0;
+  id!: string;
 
-  private _isInit = false;
+  config = {
+    PAYLOAD_MAX: 9,
+    HEALTH_MAX: 9,
+  }
 
   area = new Area(this);
   mind = new Mind(this);
+
+  private _isInit = false;
 
   input(data: IInput) {
     if (!this._isInit) {
@@ -19,6 +24,8 @@ export class Mother {
     this.tick = data.tick;
     this.area.input(data.map);
     this.mind.input(data.ants);
-    return this.mind.getActions();
+    const z = this.mind.getActions();
+    console.log('END TURN');
+    return z;
   }
 }

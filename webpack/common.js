@@ -12,6 +12,7 @@ const rv = {
     extensions: ['.ts', '.js'],
     alias: {
       '@domain': resolve(__dirname, '../src/domain'),
+      '@common': resolve(__dirname, '../src/common'),
     },
   },
   module: {
