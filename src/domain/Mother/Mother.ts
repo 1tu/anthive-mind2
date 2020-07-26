@@ -3,13 +3,13 @@ import { Area } from '@domain/Area';
 import { Mind } from '@domain/Mind';
 
 export class Mother {
-  tick = 0;
-  id!: string;
-
-  config = {
+  static config = {
     PAYLOAD_MAX: 9,
     HEALTH_MAX: 9,
-  }
+  };
+
+  tick = 0;
+  id!: string;
 
   area = new Area(this);
   mind = new Mind(this);

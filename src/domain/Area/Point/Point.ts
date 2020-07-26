@@ -22,4 +22,8 @@ export class Point implements IPointState {
   equal(point: IPointState) {
     return this.x === point.x && this.y === point.y;
   }
+
+  toJSON() {
+    return { x: this.x, y: this.y }
+  }
 }

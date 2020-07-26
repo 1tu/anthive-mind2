@@ -39,9 +39,9 @@ export class Mind {
 
   constructor(private _mother: Mother) {
     autorun(() => {
+      console.log('[MIND] autorun: NEW ACTIONS');
       this.actionList = this.actionListComputed;
-      console.log('NEW ACTIONS');
-
+      console.log('[MIND] autorun: NEW ACTIONS | END');
     });
   }
 

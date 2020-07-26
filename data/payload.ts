@@ -12,7 +12,7 @@ export const payload: IInput[] = [
     },
     map: {
       cells: [
-        [new CM(null, 1, 1), {}, {}],
+        [new CM(null, 1), {}, new CM(null, undefined, 1)],
         [new CM(5), new CM(null, 17), {}],
         [new CM(9), {}, new CM(null, null, null)],
       ],
@@ -27,9 +27,9 @@ export const payload: IInput[] = [
     },
     map: {
       cells: [
-        [new CM(1, 1, 1), {}, {}],
-        [new CM(4), {}, {}],
-        [new CM(9), new CM(null, 17), new CM(null, null, null)],
+        [new CM(1, 1), {}, new CM(null, undefined, 1)],
+        [new CM(4), new CM(null, 17), {}],
+        [new CM(9), {}, new CM(null, null, null)],
       ],
     },
   },

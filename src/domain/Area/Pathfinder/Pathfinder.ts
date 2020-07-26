@@ -1,6 +1,7 @@
 import { computed } from 'mobx';
-import { IPointState } from '@domain/Area';
+import { IPointState, Cell } from '@domain/Area';
 import { Mother } from '@domain/Mother';
+import { Point } from '@domain/Area/Point';
 
 export class Pathfinder {
   static vector(current: IPointState, target: IPointState): IPointState {
@@ -25,6 +26,12 @@ export class Pathfinder {
   static euclideanDistance(current: IPointState, target: IPointState) {
     const { x, y } = Pathfinder.vector(current, target);
     return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+  }
+
+  static closest(start: Point, targetList: Cell[]) {
+    const distanceList = targetList.map((c) => c.distanceTo(start));
+    const distanceMin = Math.min(...distanceList);
+    return { distance: distanceMin, cell: targetList[distanceList.indexOf(distanceMin)] };
   }
 
   @computed get height() {

@@ -2,15 +2,12 @@ import { Cell, IPointState, ISize, Pathfinder } from '@domain/Area';
 import { ICell, IMap } from '@domain/Game';
 import { Mother } from '@domain/Mother';
 import flatten from 'lodash/flatten';
-import { computed, observable, runInAction } from 'mobx';
-import { IGoal } from '@domain/Mind';
+import { computed, observable } from 'mobx';
 
 export class Area {
   pathfinder = new Pathfinder(this._mother);
 
   @observable map: Cell[][] = [];
-  targetList = new Map<Cell, IGoal[]>();
-
   @computed get list() {
     return flatten(this.map);
   }
@@ -25,6 +22,9 @@ export class Area {
   @computed get listHive() {
     return this.list.filter((c) => c.isHiveMy);
   }
+  @computed get listFoodFree() {
+    return this.list.filter((c) => c.isFoodFree);
+  }
 
   constructor(private _mother: Mother) {}
 
@@ -35,39 +35,6 @@ export class Area {
 
   cellGet(point: IPointState) {
     return this.map[point.y][point.x];
-  }
-
-  targetHas(cell: Cell, goal: IGoal) {
-    const c = this.targetList.get(cell);
-    return c?.includes(goal);
-  }
-
-  targetAdd(cell: Cell, goal: IGoal) {
-    console.log('TARGET ADD');
-
-    Promise.resolve().then(() => {
-      runInAction(() => {
-        const current = this.targetList.get(cell);
-        if (!current) this.targetList.set(cell, [goal]);
-        else if (!current.includes(goal)) current.push(goal);
-        else console.error('targetAdd WTF')
-      })
-    });
-  }
-
-  targetRemove(cell: Cell, goal: IGoal) {
-    console.log('TARGET REMOVE');
-
-    Promise.resolve(cell).then((cell) => {
-      runInAction(() => {
-        const current = this.targetList.get(cell);
-        if (!current) return
-        else if (current.includes(goal)) {
-          if (current.length <= 1) this.targetList.delete(cell);
-          else this.targetList.set(cell, current.splice(current.indexOf(goal), 1));
-        }
-      })
-    });
   }
 
   private _init(map: IMap) {

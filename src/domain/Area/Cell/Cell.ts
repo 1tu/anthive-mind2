@@ -1,7 +1,7 @@
 import { EPlayer, IPointState, Pathfinder, TAntVariant, TPlayerVariant } from '@domain/Area';
 import { Point } from '@domain/Area/Point';
 import { ICell } from '@domain/Game';
-import { Ant, IGoal } from '@domain/Mind';
+import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import { computed, observable } from 'mobx';
 
@@ -28,13 +28,16 @@ export class Cell {
   @computed get isFood() {
     return !this.hive && !this.ant && this.food > 0;
   }
+  @computed get isFoodFree() {
+    return this.isFood && !this.targetBy;
+  }
 
   @computed get isWalkable() {
     return this.hive !== EPlayer.STRANGER && !this.ant && !this.food;
   }
 
-  @computed get targetBy(): IGoal[] {
-    return this._mother.mind.goalList.filter(g => g.target === this);
+  @computed get targetBy() {
+    return this._mother.mind.list.filter(a => a.goal._target === this);
   }
 
   constructor(private _mother: Mother, point: IPointState, cell: ICell) {

@@ -1,15 +1,44 @@
 import { Disposable } from '@common/class/Disposable/Disposable';
-import { Action, EActionName } from '@domain/Action';
+import { Action } from '@domain/Action';
 import { Cell, IPointState, Pathfinder } from '@domain/Area';
 import { Ant } from '@domain/Mind';
-import { IGoal } from '@domain/Mind/Goal/Goal.types';
+import { IGoal, IGoalStage } from '@domain/Mind/Goal/Goal.types';
 import { Mother } from '@domain/Mother';
-import { computed, observable } from 'mobx';
+import { computed, observable, runInAction, trace } from 'mobx';
 
 export abstract class Goal extends Disposable implements IGoal {
-  @observable target: Cell;
+  abstract get stageList(): IGoalStage[];
+
+  protected stageIndex = 0;
+  protected get stage() {
+    return this.stageList[this.stageIndex];
+  }
+
+  @observable _target?: Cell;
+  @computed get target(): Cell {
+    console.log('[GOAL] get TARGET', this._ant.id);
+    trace();
+    let target = this._target;
+    while (this.stage.conditionEnd(this._ant, this._mother)) {
+      const nextIndex = this.stageIndex + 1;
+      this.stageIndex = nextIndex < this.stageList.length ? nextIndex : 0;
+    }
+    if (this.stage.targetValid(this._ant, target)) return target;
+    const targetList = [...this.stage.targetList(this._ant, this._mother)];
+    while (!target || !targetList.length) {
+      const targetTemp = this.stage.target(this._ant, targetList);
+      if (this.stage.targetValid(this._ant, targetTemp)) target = targetTemp;
+      else targetList.splice(targetList.indexOf(targetTemp), 1);
+    }
+    Promise.resolve(target).then((cell) => {
+      console.log('RUN');
+      runInAction(() => this._target = cell);
+    })
+    console.log('RUN FATER');
+    return target;
+  }
+
   abstract get action(): Action;
-  protected abstract get _actionName(): EActionName;
 
   @computed get targetDistance() {
     return this.target?.distanceTo(this._ant.point) ?? -1;
@@ -30,10 +59,5 @@ export abstract class Goal extends Disposable implements IGoal {
 
   constructor(protected _mother: Mother, protected _ant: Ant) {
     super();
-  }
-
-  protected _targetClosest(targetList: Cell[]) {
-    const distanceList = targetList.map((c) => c.distanceTo(this._ant.point));
-    return targetList[distanceList.indexOf(Math.min(...distanceList))];
   }
 }
