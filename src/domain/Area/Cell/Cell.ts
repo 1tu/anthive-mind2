@@ -1,4 +1,4 @@
-import { EPlayer, IPointState, Pathfinder, TAntVariant, TPlayerVariant } from '@domain/Area';
+import { IPointState, Pathfinder, TAntVariant, TPlayerVariant } from '@domain/Area';
 import { Point } from '@domain/Area/Point';
 import { ICell } from '@domain/Game';
 import { Ant } from '@domain/Mind';
@@ -10,20 +10,20 @@ export class Cell {
 
   @observable food?: number;
   @observable hive?: TPlayerVariant;
-  @observable private _ant?: TAntVariant;
-  @computed get ant(): Ant | TAntVariant | undefined {
+  @observable private _ant?: TPlayerVariant;
+  @computed get ant(): Ant | TPlayerVariant | undefined {
     if (!this._ant) return;
-    return this._ant !== EPlayer.STRANGER ? this._mother.mind.dict[this._ant] : EPlayer.STRANGER;
+    return this._ant === this._mother.id ? this._mother.mind.dict[this._ant] : this._ant;
   }
-  set ant(value: Ant | TAntVariant | undefined) {
-    this._ant = value instanceof Ant ? value.id : value;
+  set ant(value: Ant | TPlayerVariant | undefined) {
+    this._ant = value instanceof Ant ? this._mother.id : value;
   }
 
   @computed get isAntMy() {
-    return !!this.ant && this.ant !== EPlayer.STRANGER;
+    return !!this.ant && this.ant === this._mother.id;
   }
   @computed get isHiveMy() {
-    return !!this.hive && this.hive !== EPlayer.STRANGER;
+    return !!this.hive && this.hive === this._mother.id;
   }
   @computed get isFood() {
     return !this.hive && !this.ant && this.food > 0;
@@ -33,11 +33,11 @@ export class Cell {
   }
 
   @computed get isWalkable() {
-    return this.hive !== EPlayer.STRANGER && !this.ant && !this.food;
+    return (this.hive ? this.hive === this._mother.id : true) && !this.ant && !this.food;
   }
 
-  @computed get targetBy() {
-    return this._mother.mind.list.filter(a => a.goal._target === this);
+  get targetBy() {
+    return this._mother.mind.list.filter((a) => a.goal._target === this);
   }
 
   constructor(private _mother: Mother, point: IPointState, cell: ICell) {
@@ -53,5 +53,5 @@ export class Cell {
 
   distanceTo(point: Point) {
     return Pathfinder.manhattanDistance(this.point, point);
-  };
+  }
 }

@@ -2,21 +2,19 @@ export type TPlayerId = string;
 export type TPlayerVariant = TPlayerId | 'stranger';
 
 export interface IInput {
-  tick: number;
   id: TPlayerId;
-  ants: IAntList;
-  map: IMap;
+  tick: number;
+  ants: IAnt[];
+  canvas: IMap;
 }
 
-export type IAntList = { [id: string]: IAnt };
-
 export interface IAnt {
+  id: number;
   wasted: number;
   age: number;
   health: number;
   payload: number;
-  x: number;
-  y: number;
+  point: { x: number; y: number };
   event: string;
 }
 
@@ -30,4 +28,5 @@ export interface ICell {
   ant?: TPlayerVariant;
   hive?: TPlayerVariant;
   food?: number;
+  terrain?: string; // TODO: 'clear' | ...
 }

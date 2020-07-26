@@ -22,10 +22,10 @@ export class Mother {
       this._isInit = true;
     }
     this.tick = data.tick;
-    this.area.input(data.map);
+    this.area.input(data.canvas);
     this.mind.input(data.ants);
-    const z = this.mind.getActions();
-    console.log('END TURN');
+    const z = this.mind.actionList;
+    console.warn('END TURN');
     return z;
   }
 }

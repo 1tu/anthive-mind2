@@ -1,8 +1,8 @@
-import { IAntList } from '@domain/Game';
 import { Ant, TActionList } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import difference from 'lodash/difference';
 import { action, autorun, computed, observable } from 'mobx';
+import { IAnt } from '@domain/Game';
 
 export class Mind {
   private _isInit = false;
@@ -39,13 +39,11 @@ export class Mind {
 
   constructor(private _mother: Mother) {
     autorun(() => {
-      console.log('[MIND] autorun: NEW ACTIONS');
       this.actionList = this.actionListComputed;
-      console.log('[MIND] autorun: NEW ACTIONS | END');
     });
   }
 
-  input(list: IAntList) {
+  input(list: IAnt[]) {
     if (!this._isInit) this._init(list);
     else this._update(list);
   }
@@ -70,29 +68,27 @@ export class Mind {
     // }, {} as any);
   }
 
-  private _init(list: IAntList) {
+  private _init(list: IAnt[]) {
     this._fill(list);
     this._isInit = true;
   }
 
   @action
-  private _update(list: IAntList) {
-    const listInId = Object.keys(list);
-    for (const antId of listInId) {
-      const antIn = list[antId];
-      const antOut = this.dict[antId];
+  private _update(list: IAnt[]) {
+    const listInId = list.map(a => a.id.toString());
+    list.forEach((antIn) => {
+      const antOut = this.dict[antIn.id];
       if (antOut) antOut.update(antIn);
-      else this.dict[antId] = new Ant(this._mother, antId, antIn);
-    }
+      else this.dict[antIn.id] = new Ant(this._mother, antIn.id, antIn);
+    });
     const listRemoveId = difference(Object.keys(this.dict), listInId);
     listRemoveId.forEach((id) => delete this.dict[id]);
   }
 
   @action
-  private _fill(list: IAntList) {
-    for (const antId in list) {
-      const ant = list[antId];
-      this.dict[antId] = new Ant(this._mother, antId, ant);
-    }
+  private _fill(list: IAnt[]) {
+    list.forEach((ant) => {
+      this.dict[ant.id] = new Ant(this._mother, ant.id, ant);
+    });
   }
 }

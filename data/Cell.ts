@@ -1,7 +1,7 @@
-import { TAntVariant, TPlayerVariant } from '@domain/Area';
+import { TPlayerVariant } from '@domain/Area';
 
 export class CM {
-  ant?: TAntVariant;
+  ant?: TPlayerVariant;
   hive?: TPlayerVariant;
   food?: number;
 

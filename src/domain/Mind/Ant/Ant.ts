@@ -28,12 +28,12 @@ export class Ant {
   }
 
   constructor(private _mother: Mother, public id: TAntId, ant: IAnt) {
-    this.point = new Point(ant);
+    this.point = new Point(ant.point);
     this.update(ant);
   }
 
   @action update(ant: IAnt) {
-    this.point.update(ant);
+    this.point.update(ant.point);
     this.payload = ant.payload;
     this.health = ant.health;
   }
