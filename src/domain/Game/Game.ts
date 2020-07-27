@@ -36,7 +36,7 @@ export class Game {
               try {
                 const data = JSON.parse(body);
                 const response = this.handleData(data);
-                res.end(JSON.stringify(response));
+                res.end(JSON.stringify({ orders: response }));
                 console.log('Tick:', data.tick, response);
               } catch (error) {
                 res.end('parse data error');
