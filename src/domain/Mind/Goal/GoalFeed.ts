@@ -1,9 +1,9 @@
-import { Action, EActionName } from '@domain/Action';
 import { Pathfinder, Point } from '@domain/Area';
 import { Ant, IGoalStage } from '@domain/Mind';
 import { Goal } from '@domain/Mind/Goal/Goal';
 import { Mother } from '@domain/Mother';
 import { computed } from 'mobx';
+import { EActionName, Action } from '@domain/Game/Action';
 
 export class GoalFeed extends Goal {
   static DISTANCE_NO_UNLOAD = 1;
@@ -31,8 +31,8 @@ export class GoalFeed extends Goal {
   }
 
   @computed get action() {
-    if (!this.target || !this._targetMove) return new Action(EActionName.STAY);
-    return new Action(this.stage.actionName(this.targetDistance), new Point(this._targetMove));
+    if (!this.target || !this._targetMove) return new Action(this._ant, EActionName.STAY);
+    return new Action(this._ant, this.stage.actionName(this.targetDistance), new Point(this._targetMove));
   }
 
   constructor(_mother: Mother, _ant: Ant) {

@@ -1,4 +1,5 @@
 export interface IActionServer {
+  antId: number;
   act: EActionName,
   dir?: EActionDirection,
 };

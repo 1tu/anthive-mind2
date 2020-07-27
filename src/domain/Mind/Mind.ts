@@ -1,12 +1,13 @@
-import { Ant, TActionList } from '@domain/Mind';
+import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import difference from 'lodash/difference';
 import { action, autorun, computed, observable } from 'mobx';
 import { IAnt } from '@domain/Game';
+import { IActionServer } from '@domain/Game/Action';
 
 export class Mind {
   private _isInit = false;
-  actionList: TActionList = {};
+  actionList: IActionServer[] = [];
 
   @observable public dict: { [id: string]: Ant } = {};
   @computed public get list() {
@@ -18,14 +19,14 @@ export class Mind {
   }
 
   @computed get actionListComputed() {
-    const result: TActionList = {};
+    const result: IActionServer[] = [];
     const list = [...this.list];
     let i = 0;
     while (list.length) {
       const ant = list[i];
       const action = ant.goal.action;
       if (action) {
-        result[ant.id] = action.toJSON();
+        result.push(action.toJSON());
         list.splice(i, 1);
       } else i = i >= list.length ? 0 : i + 1;
     }
@@ -46,26 +47,6 @@ export class Mind {
   input(list: IAnt[]) {
     if (!this._isInit) this._init(list);
     else this._update(list);
-  }
-
-  public getActions() {
-    const result: TActionList = {};
-    const list = [...this.list];
-    let i = 0;
-    while (list.length) {
-      const ant = list[i];
-      const action = ant.goal.action;
-      if (action) {
-        result[ant.id] = action.toJSON();
-        list.splice(i, 1);
-      } else i = i >= list.length ? 0 : i + 1;
-    }
-    return result;
-
-    // return this.list.reduce((acc, ant) => {
-    //   acc[ant.id] = ant.goal.action.toJSON();
-    //   return acc;
-    // }, {} as any);
   }
 
   private _init(list: IAnt[]) {

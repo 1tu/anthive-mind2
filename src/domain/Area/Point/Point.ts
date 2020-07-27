@@ -1,6 +1,6 @@
 import { IPointState } from '@domain/Area';
 import { action, observable } from 'mobx';
-import { EActionDirection } from '@domain/Action';
+import { EActionDirection } from '@domain/Game/Action';
 
 export class Point implements IPointState {
   @observable x: number;

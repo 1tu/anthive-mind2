@@ -1,10 +1,10 @@
 import { Disposable } from '@common/class/Disposable/Disposable';
-import { Action } from '@domain/Action';
 import { Cell, IPointState, Pathfinder } from '@domain/Area';
 import { Ant } from '@domain/Mind';
 import { IGoal, IGoalStage } from '@domain/Mind/Goal/Goal.types';
 import { Mother } from '@domain/Mother';
 import { computed, trace } from 'mobx';
+import { Action } from '@domain/Game/Action';
 
 export abstract class Goal extends Disposable implements IGoal {
   abstract get stageList(): IGoalStage[];

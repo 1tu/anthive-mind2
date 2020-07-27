@@ -1,8 +1,8 @@
-import { Action, EActionName } from '@domain/Action';
 import { Cell } from '@domain/Area';
 import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import { IDisposable } from 'src/common/class/Disposable/Disposable.types';
+import { Action, EActionName } from '@domain/Game/Action';
 
 export interface IGoal extends IDisposable {
   readonly stageList: IGoalStage[];
