@@ -11,7 +11,8 @@ if (IS_DEV) {
   }
 
   async function runServer() {
-    const res = (require('../data/payload').payload as IInput[]).map((item) => async () => {
+    // console.log(game.handleData(require('../data/payload.json')));
+    const res = (require('../data/payload3').payload as IInput[]).map((item) => async () => {
       await delay(500);
       return item;
     });

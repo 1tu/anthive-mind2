@@ -9,14 +9,16 @@ import { Action } from '@domain/Game/Action';
 export abstract class Goal extends Disposable implements IGoal {
   abstract get stageList(): IGoalStage[];
 
+  private _stageIndex = 0;
   @computed protected get stage() {
-    let index = 0;
+    let index = this._stageIndex;
     while (this.stageList[index].conditionEnd(this._ant, this._mother)) {
       const nextIndex = index + 1;
       index = nextIndex < this.stageList.length ? nextIndex : 0;
       this._target = undefined;
-      IS_DEV && console.log(`[GOAL ${this._ant.id}] next STAGE`, index);
+      IS_DEV && console.warn(`[GOAL ${this._ant.id}] next STAGE`, index);
     }
+    this._stageIndex = index;
     return this.stageList[index];
   }
 
