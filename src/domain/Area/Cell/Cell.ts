@@ -25,6 +25,9 @@ export class Cell {
   @computed get isHiveMy() {
     return !!this.hive && this.hive === this._mother.id;
   }
+  @computed get isHiveMyWithFood() {
+    return !!this.isHiveMy && this.food > 0;
+  }
   @computed get isFood() {
     return !this.hive && !this.ant && this.food > 0;
   }

@@ -22,6 +22,10 @@ export class Area {
   @computed get listHive() {
     return this.list.filter((c) => c.isHiveMy);
   }
+  @computed get listHiveGrow() {
+    const withFood = this.list.filter((c) => c.isHiveMyWithFood);
+    return withFood.length ? withFood : this.listHive;
+  }
   @computed get listFoodFree() {
     return this.list.filter((c) => c.isFoodFree);
   }

@@ -1,6 +1,6 @@
 {
   "name": "anthive-mind",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "description": "itu ant-mother",
   "main": "index.js",
   "scripts": {
@@ -40,6 +40,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.19",
-    "mobx": "^5.15.4"
+    "mobx": "^5.15.4",
+    "mobx-utils": "^5.6.1"
   }
 }

@@ -17,7 +17,7 @@ export abstract class Goal extends Disposable implements IGoal {
       const nextIndex = index + 1;
       index = nextIndex < this.actionList.length ? nextIndex : 0;
       this._target = undefined;
-      IS_DEV && console.warn(`[GOAL ${this._ant.id}] next STAGE`, index);
+      IS_DEV && console.warn(`[GOAL ${this._ant.id}] next ACTION`, index);
     }
     this._actionIndex = index;
     return this.actionList[index];
@@ -25,8 +25,9 @@ export abstract class Goal extends Disposable implements IGoal {
 
   _target?: Cell;
   @computed get target(): Cell {
-    IS_DEV && console.log(`[GOAL ${this._ant.id}] get TARGET`, this.constructor.name);
     IS_DEV && trace();
+    // return this.action.target;
+
     let target = this._target;
     if (this.action.isTargetValid(target)) return target;
     this._target = this.action.target;

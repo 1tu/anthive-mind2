@@ -19,7 +19,7 @@ export class GoalGrowAction1 extends GoalAction {
   }
 
   @computed protected get _targetList() {
-    return this._mother.area.listHive;
+    return this._mother.area.listHiveGrow;
   }
 
   protected _targetPick(list: Cell[]) {

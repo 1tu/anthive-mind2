@@ -3,7 +3,7 @@ import { IActionServer } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import difference from 'lodash/difference';
-import { action, autorun, computed, observable } from 'mobx';
+import { action, autorun, computed, observable, getDependencyTree } from 'mobx';
 
 export class Mind {
   private _isInit = false;
@@ -41,6 +41,9 @@ export class Mind {
   constructor(private _mother: Mother) {
     autorun(() => {
       this.actionList = this.actionListComputed;
+      const z = getDependencyTree(this, 'actionListComputed');
+      console.log('ZZZ', z);
+
     });
   }
 
@@ -66,7 +69,6 @@ export class Mind {
     listRemoveId.forEach((id) => delete this.dict[id]);
   }
 
-  @action
   private _fill(list: IAnt[]) {
     list.forEach((ant) => {
       this.dict[ant.id] = new Ant(this._mother, ant.id, ant);

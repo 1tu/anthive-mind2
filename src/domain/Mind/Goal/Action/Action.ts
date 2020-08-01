@@ -1,4 +1,4 @@
-import { Cell, Pathfinder } from '@domain/Area';
+import { Cell } from '@domain/Area';
 import { EActionName } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind/Ant';
 import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';

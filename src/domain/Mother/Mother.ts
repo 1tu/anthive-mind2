@@ -1,6 +1,7 @@
 import { IInput } from '@domain/Game';
 import { Area } from '@domain/Area';
 import { Mind } from '@domain/Mind';
+import { transaction } from 'mobx';
 
 export class Mother {
   static config = {
@@ -22,8 +23,10 @@ export class Mother {
       this._isInit = true;
     }
     this.tick = data.tick;
-    this.area.input(data.canvas);
-    this.mind.input(data.ants);
+    transaction(() => {
+      this.area.input(data.canvas);
+      this.mind.input(data.ants);
+    });
     const z = this.mind.actionList;
     console.warn('END TURN');
     return z;
