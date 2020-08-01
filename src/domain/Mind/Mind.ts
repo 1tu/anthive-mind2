@@ -1,9 +1,9 @@
+import { IAnt } from '@domain/Game';
+import { IActionServer } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import difference from 'lodash/difference';
 import { action, autorun, computed, observable } from 'mobx';
-import { IAnt } from '@domain/Game';
-import { IActionServer } from '@domain/Game/Action';
 
 export class Mind {
   private _isInit = false;
@@ -24,7 +24,7 @@ export class Mind {
     let i = 0;
     while (list.length) {
       const ant = list[i];
-      const action = ant.goal.action;
+      const action = ant.goal.gameAction;
       if (action) {
         result.push(action.toJSON());
         list.splice(i, 1);

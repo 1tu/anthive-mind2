@@ -1,10 +1,10 @@
 import { Cell, Point, TAntId } from '@domain/Area';
 import { IAnt } from '@domain/Game';
+import { IGoal } from '@domain/Mind/Goal';
+import { GoalFeed } from '@domain/Mind/Goal/Feed/Feed';
+import { GoalGrow } from '@domain/Mind/Goal/Grow/Grow';
 import { Mother } from '@domain/Mother';
 import { action, computed, observable } from 'mobx';
-import { GoalFeed } from '@domain/Mind/Goal/GoalFeed';
-import { GoalGrow } from '@domain/Mind/Goal/GoalGrow';
-import { IGoal } from '@domain/Mind/Goal';
 
 export class Ant {
   private _goal: IGoal;

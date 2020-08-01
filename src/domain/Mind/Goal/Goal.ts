@@ -1,25 +1,26 @@
 import { Disposable } from '@common/class/Disposable/Disposable';
 import { Cell, IPointState, Pathfinder } from '@domain/Area';
+import { GameAction } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
-import { IGoal, IGoalStage } from '@domain/Mind/Goal/Goal.types';
+import { IGoal } from '@domain/Mind/Goal/Goal.types';
 import { Mother } from '@domain/Mother';
 import { computed, trace } from 'mobx';
-import { Action } from '@domain/Game/Action';
+import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';
 
 export abstract class Goal extends Disposable implements IGoal {
-  abstract get stageList(): IGoalStage[];
+  abstract get actionList(): IGoalAction[];
 
-  private _stageIndex = 0;
-  @computed protected get stage() {
-    let index = this._stageIndex;
-    while (this.stageList[index].conditionEnd(this._ant, this._mother)) {
+  private _actionIndex = 0;
+  @computed protected get action() {
+    let index = this._actionIndex;
+    while (this.actionList[index].end) {
       const nextIndex = index + 1;
-      index = nextIndex < this.stageList.length ? nextIndex : 0;
+      index = nextIndex < this.actionList.length ? nextIndex : 0;
       this._target = undefined;
       IS_DEV && console.warn(`[GOAL ${this._ant.id}] next STAGE`, index);
     }
-    this._stageIndex = index;
-    return this.stageList[index];
+    this._actionIndex = index;
+    return this.actionList[index];
   }
 
   _target?: Cell;
@@ -27,20 +28,13 @@ export abstract class Goal extends Disposable implements IGoal {
     IS_DEV && console.log(`[GOAL ${this._ant.id}] get TARGET`, this.constructor.name);
     IS_DEV && trace();
     let target = this._target;
-    if (this.stage.targetValid(this._ant, target)) return target;
-    const targetList = [...this.stage.targetList(this._ant, this._mother)];
-    IS_DEV && console.error(`[GOAL ${this._ant.id}] next TARGET LIST`, target, targetList);
-    while (!target || !targetList.length) {
-      const targetTemp = this.stage.target(this._ant, targetList);
-      IS_DEV && console.error(`[GOAL ${this._ant.id}] next TARGET`, targetTemp);
-      if (this.stage.targetValid(this._ant, targetTemp)) target = targetTemp;
-      else targetList.splice(targetList.indexOf(targetTemp), 1);
-    }
-    this._target = target;
-    return target;
+    if (this.action.isTargetValid(target)) return target;
+    this._target = this.action.target;
+    IS_DEV && console.log(`[GOAL ${this._ant.id}] next TARGET`, this._target);
+    return this._target;
   }
 
-  abstract get action(): Action;
+  abstract get gameAction(): GameAction;
 
   @computed get targetDistance() {
     return this.target?.distanceTo(this._ant.point) ?? -1;
