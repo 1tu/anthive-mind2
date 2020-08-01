@@ -24,10 +24,7 @@ export class Area {
   }
   @computed get listHiveGrow() {
     const withFood = this.list.filter((c) => c.isHiveMyWithFood);
-    return withFood.length ? withFood : this.listHive;
-  }
-  @computed get listFoodFree() {
-    return this.list.filter((c) => c.isFoodFree);
+    return withFood.length ? withFood : this.list.filter((c) => c.isHiveMyFree);
   }
 
   constructor(private _mother: Mother) {}

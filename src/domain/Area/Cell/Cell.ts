@@ -3,7 +3,7 @@ import { Point } from '@domain/Area/Point';
 import { ICell } from '@domain/Game';
 import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
-import { computed, observable } from 'mobx';
+import { computed, observable, action } from 'mobx';
 
 export class Cell {
   point: Point;
@@ -25,18 +25,18 @@ export class Cell {
   @computed get isHiveMy() {
     return !!this.hive && this.hive === this._mother.id;
   }
+  @computed get isHiveMyFree() {
+    return !!this.isHiveMy && !this._ant;
+  }
   @computed get isHiveMyWithFood() {
-    return !!this.isHiveMy && this.food > 0;
+    return !!this.isHiveMyFree && this.food > 0;
   }
   @computed get isFood() {
     return !this.hive && !this.ant && this.food > 0;
   }
-  @computed get isFoodFree() {
-    return this.isFood && !this.targetBy;
-  }
 
   @computed get isWalkable() {
-    return (this.hive ? this.hive === this._mother.id : true) && !this.ant && !this.food;
+    return (this.hive ? this.hive === this._mother.id : true) && !this._ant && !this.food;
   }
 
   get targetBy() {
@@ -48,6 +48,7 @@ export class Cell {
     this.update(cell);
   }
 
+  @action
   update(cell: ICell) {
     this.food = cell.food;
     this.ant = cell.ant;

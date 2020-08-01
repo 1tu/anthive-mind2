@@ -41,9 +41,10 @@ export class Mind {
   constructor(private _mother: Mother) {
     autorun(() => {
       this.actionList = this.actionListComputed;
-      const z = getDependencyTree(this, 'actionListComputed');
-      console.log('ZZZ', z);
-
+      if (IS_DEV) {
+        const z = getDependencyTree(this, 'actionListComputed');
+        console.log('ZZZ', z);
+      }
     });
   }
 
@@ -59,7 +60,7 @@ export class Mind {
 
   @action
   private _update(list: IAnt[]) {
-    const listInId = list.map(a => a.id.toString());
+    const listInId = list.map((a) => a.id.toString());
     list.forEach((antIn) => {
       const antOut = this.dict[antIn.id];
       if (antOut) antOut.update(antIn);

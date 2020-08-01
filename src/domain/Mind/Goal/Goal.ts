@@ -26,7 +26,7 @@ export abstract class Goal extends Disposable implements IGoal {
   _target?: Cell;
   @computed get target(): Cell {
     IS_DEV && trace();
-    // return this.action.target;
+    return this._target = this.action.target;
 
     let target = this._target;
     if (this.action.isTargetValid(target)) return target;
