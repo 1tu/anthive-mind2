@@ -10,7 +10,7 @@ export class Ant {
   private _goal: IGoal;
   @computed get goal(): IGoal {
     this._goal?.dispose();
-    if (GoalFeed.NEED(this.health, Mother.config.HEALTH_MAX)) this._goal = new GoalFeed(this._mother, this);
+    if (GoalFeed.NEED(this.health, Mother.config.HEALTH_MAX, this._goal instanceof GoalFeed)) this._goal = new GoalFeed(this._mother, this);
     else this._goal = new GoalGrow(this._mother, this);
     return this._goal;
   }

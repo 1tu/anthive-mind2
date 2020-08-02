@@ -19,8 +19,8 @@ export class Point implements IPointState {
     return Math.abs(this.x) > Math.abs(this.y) ? (this.x > 0 ? EActionDirection.RIGHT : EActionDirection.LEFT) : this.y > 0 ? EActionDirection.DOWN : EActionDirection.UP;
   }
 
-  equal(point: IPointState) {
-    return this.x === point.x && this.y === point.y;
+  equal(point?: IPointState) {
+    return point && this.x === point.x && this.y === point.y;
   }
 
   toJSON() {

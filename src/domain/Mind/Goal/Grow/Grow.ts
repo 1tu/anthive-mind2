@@ -3,8 +3,8 @@ import { GameAction, EActionName } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';
 import { Goal } from '@domain/Mind/Goal/Goal';
-import { GoalGrowAction0 } from '@domain/Mind/Goal/Grow/Action0';
-import { GoalGrowAction1 } from '@domain/Mind/Goal/Grow/Action1';
+import { GoalGrowAction0 } from '@domain/Mind/Goal/Grow/GrowAction0';
+import { GoalGrowAction1 } from '@domain/Mind/Goal/Grow/GrowAction1';
 import { Mother } from '@domain/Mother';
 import { computed } from 'mobx';
 

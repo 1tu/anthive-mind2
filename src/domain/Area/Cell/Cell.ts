@@ -39,8 +39,8 @@ export class Cell {
     return (this.hive ? this.hive === this._mother.id : true) && !this._ant && !this.food;
   }
 
-  get targetBy() {
-    return this._mother.mind.list.filter((a) => a.goal._target === this);
+  @computed get targetBy() {
+    return this._mother.mind.list.filter((a) => this === a.goal._target);
   }
 
   constructor(private _mother: Mother, point: IPointState, cell: ICell) {
@@ -48,8 +48,7 @@ export class Cell {
     this.update(cell);
   }
 
-  @action
-  update(cell: ICell) {
+  @action update(cell: ICell) {
     this.food = cell.food;
     this.ant = cell.ant;
     this.hive = cell.hive;

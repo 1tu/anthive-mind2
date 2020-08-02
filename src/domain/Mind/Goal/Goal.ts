@@ -2,10 +2,11 @@ import { Disposable } from '@common/class/Disposable/Disposable';
 import { Cell, IPointState, Pathfinder } from '@domain/Area';
 import { GameAction } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
+import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';
 import { IGoal } from '@domain/Mind/Goal/Goal.types';
 import { Mother } from '@domain/Mother';
-import { computed, trace } from 'mobx';
-import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';
+import { autorun, computed, observable, onBecomeUnobserved, trace } from 'mobx';
+import { createTransformer } from 'mobx-utils';
 
 export abstract class Goal extends Disposable implements IGoal {
   abstract get actionList(): IGoalAction[];
@@ -16,23 +17,15 @@ export abstract class Goal extends Disposable implements IGoal {
     while (this.actionList[index].end) {
       const nextIndex = index + 1;
       index = nextIndex < this.actionList.length ? nextIndex : 0;
-      this._target = undefined;
       IS_DEV && console.warn(`[GOAL ${this._ant.id}] next ACTION`, index);
     }
-    this._actionIndex = index;
-    return this.actionList[index];
+    return this.actionList[this._actionIndex = index];
   }
 
-  _target?: Cell;
+  @observable _target?: Cell;
   @computed get target(): Cell {
     IS_DEV && trace();
-    return this._target = this.action.target;
-
-    let target = this._target;
-    if (this.action.isTargetValid(target)) return target;
-    this._target = this.action.target;
-    IS_DEV && console.log(`[GOAL ${this._ant.id}] next TARGET`, this._target);
-    return this._target;
+    return this.action.target;
   }
 
   abstract get gameAction(): GameAction;
@@ -62,5 +55,15 @@ export abstract class Goal extends Disposable implements IGoal {
 
   constructor(protected _mother: Mother, protected _ant: Ant) {
     super();
+    this.disposes.push(
+      autorun(() => {
+        this._target = this.target;
+      })
+    );
+    if (IS_DEV) {
+      onBecomeUnobserved(this, 'target', () => {
+        console.log('!!!!!!!!!!!!!!UN', this._ant.id);
+      });
+    }
   }
 }

@@ -18,6 +18,7 @@ export class Mother {
   private _isInit = false;
 
   input(data: IInput) {
+    console.warn('TURN START:',  data.tick);
     if (!this._isInit) {
       this.id = data.id;
       this._isInit = true;
@@ -28,7 +29,7 @@ export class Mother {
       this.mind.input(data.ants);
     });
     const z = this.mind.actionList;
-    console.warn('END TURN');
+    console.warn('TURN END:',  data.tick);
     return z;
   }
 }
