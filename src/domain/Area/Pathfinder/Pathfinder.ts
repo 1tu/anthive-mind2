@@ -44,7 +44,7 @@ export class Pathfinder {
     return this.width * this.height;
   }
 
-  constructor(private _mother: Mother) { }
+  constructor(private _mother: Mother) {}
 
   neighbours({ x, y }: IPointState): IPointState[] {
     const N = y - 1,
@@ -94,7 +94,7 @@ export class Pathfinder {
 
   canWalkHere(x: number, y: number) {
     const cell = this._mother.area.cellGet({ x, y });
-    return cell?.isWalkable;
+    return cell?.isPathfindable;
   }
 
   pointValid(point: IPointState) {
@@ -102,71 +102,67 @@ export class Pathfinder {
   }
 
   find(start: IPointState, end: IPointState) {
-    var distanceFunction = Pathfinder.manhattanDistance;
-
-    var mypathStart = new Node(null, start, this.width);
-    var mypathEnd = new Node(null, end, this.width);
-    var AStar = new Array(this.size);
-    var Open: Node[] = [mypathStart];
-    var Closed: Node[] = [];
-    var result: IPointState[] = [];
-    var myNeighbours;
-    var myNode;
-    var myPath;
-    var length, max, min, i, j;
+    const distanceFunction = Pathfinder.manhattanDistance;
+    const mypathStart = new Node(null, start);
+    const mypathEnd = new Node(null, end);
+    const AStar: { [nodeId: string]: boolean } = {};
+    const path = [mypathStart];
+    const Closed: Node[] = [];
+    let result: IPointState[] = [];
 
     // iterate through the open list until none are left
-    while ((length = Open.length)) {
-      max = this.size;
-      min = -1;
-      for (i = 0; i < length; i++) {
-        if (Open[i].f < max) {
-          max = Open[i].f;
+    while (path.length) {
+      let max = this.size;
+      let min = -1;
+      for (let i = 0; i < path.length; i++) {
+        if (path[i].f < max) {
+          max = path[i].f;
           min = i;
         }
       }
 
-      myNode = Open.splice(min, 1)[0];
-      // is it the destination node?
-      if (myNode.value === mypathEnd.value) {
-        myPath = Closed[Closed.push(myNode) - 1];
-        do {
-          result.push(myPath.point);
-        } while ((myPath = myPath.parent));
-
-        AStar = Closed = Open = [];
-        result.reverse();
+      let node = path.splice(min, 1)[0];
+      if (node.value === mypathEnd.value) {
+        result = this._backtrace(node).slice(1);
+        // let myPath = Closed[Closed.push(node) - 1];
+        // do {
+        //   result.push(myPath.point);
+        // } while ((myPath = myPath.parent));
+        // result.reverse();
       } else {
-        // find which nearby nodes are walkable
-        myNeighbours = this.neighbours(myNode.point);
-        // test each one that hasn't been tried already
-        for (i = 0, j = myNeighbours.length; i < j; i++) {
-          myPath = new Node(myNode, myNeighbours[i], this.width);
-          if (!AStar[myPath.value]) {
-            // estimated cost of this particular route so far
-            myPath.g = myNode.g + distanceFunction(myNeighbours[i], myNode.point);
-            // estimated cost of entire guessed route to the destination
-            myPath.f = myPath.g + distanceFunction(myNeighbours[i], mypathEnd.point);
-            // remember this new path for testing above
-            Open.push(myPath);
-            // mark this node in the world graph as visited
-            AStar[myPath.value] = true;
+        this.neighbours(node.point).forEach((point) => {
+          let nodeNext = new Node(node, point);
+          if (!AStar[nodeNext.value]) {
+            nodeNext.g = node.g + distanceFunction(point, node.point);
+            nodeNext.f = nodeNext.g + distanceFunction(point, mypathEnd.point);
+            path.push(nodeNext);
+            AStar[nodeNext.value] = true;
           }
-        }
-        // remember this route as having no more untested options
-        Closed.push(myNode);
+        });
+
+        Closed.push(node);
       }
-    } // keep iterating until the Open list is empty
+    }
     return result;
+  }
+
+  private _backtrace(node: Node) {
+    var path = [node.point];
+    while (node.parent) {
+      node = node.parent;
+      path.push(node.point);
+    }
+    return path.reverse();
   }
 }
 
 class Node {
-  value: number;
   f = 0;
   g = 0;
 
-  constructor(public parent: Node, public point: IPointState, width: number) {
-    this.value = point.y * width + point.x;
+  get value() {
+    return `${this.point.x}|${this.point.y}`;
   }
+
+  constructor(public parent: Node, public point: IPointState) {}
 }

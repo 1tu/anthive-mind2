@@ -37,7 +37,10 @@ export class Cell {
   }
 
   @computed get isWalkable() {
-    return (this.hive ? this.hive === this._mother.id : true) && !this._ant && !this.food;
+    return this.isPathfindable && !this.food;
+  }
+  @computed get isPathfindable() {
+    return (this.hive ? this.hive === this._mother.id : true) && !this._ant;
   }
 
   @computed get targetBy() {
