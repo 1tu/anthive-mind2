@@ -1,12 +1,11 @@
 import { Disposable } from '@common/class/Disposable/Disposable';
-import { Cell, IPointState, Pathfinder } from '@domain/Area';
-import { GameAction } from '@domain/Game/Action';
+import { Cell, IPointState, Pathfinder, Point } from '@domain/Area';
+import { EActionName, GameAction } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { IGoalAction } from '@domain/Mind/Goal/Action/Action.types';
 import { IGoal } from '@domain/Mind/Goal/Goal.types';
 import { Mother } from '@domain/Mother';
 import { autorun, computed, observable, onBecomeUnobserved, trace } from 'mobx';
-import { createTransformer } from 'mobx-utils';
 
 export abstract class Goal extends Disposable implements IGoal {
   abstract get actionList(): IGoalAction[];
@@ -28,7 +27,10 @@ export abstract class Goal extends Disposable implements IGoal {
     return this.action.target;
   }
 
-  abstract get gameAction(): GameAction;
+  @computed get gameAction() {
+    if (!this.target || !this._targetMove) return new GameAction(this._ant, EActionName.STAY);
+    return new GameAction(this._ant, this.action.actionName(this.targetDistance), new Point(this._targetMove));
+  }
 
   @computed get targetDistance() {
     return this.target?.distanceTo(this._ant.point) ?? -1;

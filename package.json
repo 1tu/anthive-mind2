@@ -1,6 +1,6 @@
 {
   "name": "anthive-mind",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "itu ant-mother",
   "main": "index.js",
   "scripts": {

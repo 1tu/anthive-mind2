@@ -3,6 +3,8 @@ import { ICell, IMap } from '@domain/Game';
 import { Mother } from '@domain/Mother';
 import flatten from 'lodash/flatten';
 import { computed, observable } from 'mobx';
+import { Ant } from '@domain/Mind';
+import { computedFn } from 'mobx-utils';
 
 export class Area {
   pathfinder = new Pathfinder(this._mother);
@@ -22,10 +24,13 @@ export class Area {
   @computed get listHive() {
     return this.list.filter((c) => c.isHiveMy);
   }
-  @computed get listHiveGrow() {
-    const withFood = this.list.filter((c) => c.isHiveMyWithFood);
-    return withFood.length ? withFood : this.list.filter((c) => c.isHiveMyFree);
+  @computed get listHiveWithFood() {
+    return this.list.filter((c) => c.isHiveMyWithFood);
   }
+  // FIXME: cycle
+  listFoodFree = computedFn((ant: Ant) => {
+    return this.list.filter((c) => !!c.targetByExclude(ant).length);
+  });
 
   constructor(private _mother: Mother) {}
 

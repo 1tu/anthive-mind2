@@ -67,7 +67,10 @@ export class Mind {
       else this.dict[antIn.id] = new Ant(this._mother, antIn.id, antIn);
     });
     const listRemoveId = difference(Object.keys(this.dict), listInId);
-    listRemoveId.forEach((id) => delete this.dict[id]);
+    listRemoveId.forEach((id) => {
+      this.dict[id].dispose();
+      delete this.dict[id];
+    });
   }
 
   private _fill(list: IAnt[]) {

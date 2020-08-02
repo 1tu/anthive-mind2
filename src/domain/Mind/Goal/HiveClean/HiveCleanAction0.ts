@@ -1,13 +1,13 @@
-import { Cell, Pathfinder } from '@domain/Area';
+import { Cell } from '@domain/Area';
 import { EActionName } from '@domain/Game/Action';
 import { Ant } from '@domain/Mind';
 import { GoalAction } from '@domain/Mind/Goal/Action/Action';
 import { Mother } from '@domain/Mother';
 import { computed } from 'mobx';
 
-export class GoalGrowAction0 extends GoalAction {
+export class GoalHiveCleanAction0 extends GoalAction {
   @computed get end() {
-    return this._ant.payload === Mother.config.PAYLOAD_MAX || !this._targetList.length;
+    return this._ant.payload === Mother.config.PAYLOAD_MAX || this._targetList.length <= 1;
   }
 
   actionName(distance: number): EActionName {
@@ -15,16 +15,16 @@ export class GoalGrowAction0 extends GoalAction {
   }
 
   isTargetValid(target?: Cell): boolean {
-    const by = target?.targetBy;
-    return target?.isFood && (!by.length || by[0] === this._ant);
+    return target?.food > 0;
   }
 
   @computed protected get _targetList() {
-    return this._mother.area.listFood;
+    return this._mother.area.listHiveWithFood;
   }
 
   protected _targetPick(list: Cell[]) {
-    return Pathfinder.closest(this._ant.point, list).cell;
+    const food = list.map(c => c.food);
+    return list[food.indexOf(Math.min(...food))];
   }
 
   constructor(mother: Mother, ant: Ant) {

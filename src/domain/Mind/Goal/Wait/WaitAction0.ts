@@ -5,22 +5,22 @@ import { GoalAction } from '@domain/Mind/Goal/Action/Action';
 import { Mother } from '@domain/Mother';
 import { computed } from 'mobx';
 
-export class GoalGrowAction0 extends GoalAction {
+export class GoalWaitAction0 extends GoalAction {
   @computed get end() {
-    return this._ant.payload === Mother.config.PAYLOAD_MAX || !this._targetList.length;
+    return false;
   }
 
   actionName(distance: number): EActionName {
-    return distance > 1 ? EActionName.MOVE : EActionName.LOAD;
+    return distance > 0 ? EActionName.MOVE : EActionName.STAY;
   }
 
   isTargetValid(target?: Cell): boolean {
-    const by = target?.targetBy;
-    return target?.isFood && (!by.length || by[0] === this._ant);
+    return target && !target.isHiveMy;
   }
 
-  @computed protected get _targetList() {
-    return this._mother.area.listFood;
+  @computed protected get _targetList(): Cell[] {
+    return this._mother.area.pathfinder.neighbours(this._ant.point).map(p => this._mother.area.cellGet(p))
+      .concat(this._mother.area.cellGet(this._ant.point));
   }
 
   protected _targetPick(list: Cell[]) {

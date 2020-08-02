@@ -4,6 +4,7 @@ import { ICell } from '@domain/Game';
 import { Ant } from '@domain/Mind';
 import { Mother } from '@domain/Mother';
 import { computed, observable, action } from 'mobx';
+import { computedFn } from 'mobx-utils';
 
 export class Cell {
   point: Point;
@@ -42,6 +43,8 @@ export class Cell {
   @computed get targetBy() {
     return this._mother.mind.list.filter((a) => this === a.goal._target);
   }
+  // FIXME: cycle
+  targetByExclude = computedFn((ant: Ant) => this._mother.mind.list.filter(a => a !== ant).filter((a) => this === a.goal._target));
 
   constructor(private _mother: Mother, point: IPointState, cell: ICell) {
     this.point = new Point(point);

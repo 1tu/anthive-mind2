@@ -15,11 +15,12 @@ export class GoalGrowAction1 extends GoalAction {
   }
 
   isTargetValid(target?: Cell): boolean {
-    return target?.isHiveMy;
+    return target?.isHiveMyFree;
   }
 
   @computed protected get _targetList() {
-    return this._mother.area.listHiveGrow;
+    const withFood = this._mother.area.listHiveWithFood;
+    return withFood.length ? withFood : this._mother.area.listHive;
   }
 
   protected _targetPick(list: Cell[]) {
