@@ -12,7 +12,7 @@ if (IS_DEV) {
 
   async function runServer() {
     // console.log(game.handleData(require('../data/payload.json')));
-    const res = (require('../data/pFeed').payload as IInput[]).map((item) => async () => {
+    const res = (require('../data/pGrow').payload as IInput[]).map((item) => async () => {
       await delay(500);
       return item;
     });

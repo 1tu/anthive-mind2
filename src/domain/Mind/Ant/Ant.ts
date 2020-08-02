@@ -15,8 +15,8 @@ export class Ant extends Disposable {
     IS_DEV && trace();
     let GoalNext: IGoalCtor;
     if (GoalFeed.NEED(this.health, Mother.config.HEALTH_MAX, this._goal instanceof GoalFeed)) GoalNext = GoalFeed;
-    else if (GoalHiveClean.NEED(this._mother, this, this._goal instanceof GoalHiveClean)) GoalNext = GoalHiveClean;
     else if (GoalGrow.NEED(this._mother, this, this._goal)) GoalNext = GoalGrow;
+    else if (GoalHiveClean.NEED(this._mother, this, this._goal instanceof GoalHiveClean)) GoalNext = GoalHiveClean;
     else GoalNext = GoalWait;
     if (this._goal instanceof GoalNext) return this._goal;
     else {

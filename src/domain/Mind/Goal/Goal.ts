@@ -36,29 +36,23 @@ export abstract class Goal extends Disposable implements IGoal {
     return this.target?.distanceTo(this._ant.point) ?? -1;
   }
 
-  @computed get targetPath() {
-    return this.target ? this._mother.area.pathfinder.find(this._ant.point, this.target.point) : [];
-  }
-
   @computed protected get _targetMove(): IPointState | undefined {
     if (!this.target) return;
-    // const { x, y } = Pathfinder.vector(this._ant.point, this.target.point);
-    // const temp = [
-    //   { x: Math.sign(x), y: 0 },
-    //   { x: 0, y: Math.sign(y) },
-    // ];
-    // const tempMirror = [
-    //   { x: Math.sign(x) * -1, y: 0 },
-    //   { x: 0, y: Math.sign(y) * -1 },
-    // ];
-    // const xPrior = Math.abs(x) >= Math.abs(y);
-    // const moveList: IPointState[] = [xPrior ? temp.shift() : temp.pop(), temp.pop(), tempMirror.pop(), tempMirror.pop()];
-    // return moveList.find((d) => {
-    //   const point = { x: this._ant.point.x + d.x, y: this._ant.point.y + d.y };
-    //   return this.target.point.equal(point) || (this._mother.area.pathfinder.pointValid(point) && this._mother.area.cellGet(point).isWalkable);
-    // });
-    // IS_DEV && console.warn(`[PATH ${this._ant.id}]`, JSON.stringify(this.targetPath));
-    return Pathfinder.vector(this._ant.point, this.targetPath[0]);
+    const { x, y } = Pathfinder.vector(this._ant.point, this.target.point);
+    const temp = [
+      { x: Math.sign(x), y: 0 },
+      { x: 0, y: Math.sign(y) },
+    ];
+    const xPrior = Math.abs(x) >= Math.abs(y);
+    const moveList: IPointState[] = [xPrior ? temp.shift() : temp.pop(), temp.pop()];
+    const move = moveList.find((d) => {
+      const point = { x: this._ant.point.x + d.x, y: this._ant.point.y + d.y };
+      return this.target.point.equal(point) || (this._mother.area.pathfinder.pointValid(point) && this._mother.area.cellGet(point).isWalkable);
+    });
+    if (move) return move;
+    const path = this._mother.area.pathfinder.find(this._ant.point, this.target.point);
+    IS_DEV && console.warn(`[PATH ${this._ant.id}]`, JSON.stringify(path));
+    return path.length && Pathfinder.vector(this._ant.point, path[0]);
   }
 
   constructor(protected _mother: Mother, protected _ant: Ant) {
