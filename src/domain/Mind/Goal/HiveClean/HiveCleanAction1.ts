@@ -7,7 +7,7 @@ import { computed } from 'mobx';
 
 export class GoalHiveCleanAction1 extends GoalAction {
   @computed get end() {
-    return this._ant.payload === 0;
+    return this._ant.cargo === 0;
   }
 
   actionName(distance: number): EActionName {

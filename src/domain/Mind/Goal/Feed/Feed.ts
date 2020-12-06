@@ -6,7 +6,7 @@ import { Goal } from '@domain/Mind/Goal/Goal';
 import { Mother } from '@domain/Mother';
 
 export class GoalFeed extends Goal {
-  static DISTANCE_NO_UNLOAD = 1;
+  static DISTANCE_NO_PUT = 1;
   static NEED = (current: number, max: number, isFeeding: boolean) => isFeeding ? current < max * 0.8 : current < max * 0.3;
 
   actionList: IGoalAction[] = [

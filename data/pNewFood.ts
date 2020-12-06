@@ -6,7 +6,7 @@ export const payload: IInput[] = [
     tick: 1,
     id: '1',
     ants: [
-      { id: 1, wasted: 0, age: 14, health: 9, payload: 0, point: { x: 0, y: 0 }, event: 'birth' },
+      { id: 1, wasted: 0, age: 14, health: 9, cargo: 0, point: { x: 0, y: 0 }, event: 'birth' },
     ],
     canvas: {
       cells: [
@@ -19,7 +19,7 @@ export const payload: IInput[] = [
     tick: 2,
     id: '1',
     ants: [
-      { id: 1, wasted: 0, age: 14, health: 7, payload: 0, point: { x: 1, y: 0 }, event: 'birth' },
+      { id: 1, wasted: 0, age: 14, health: 7, cargo: 0, point: { x: 1, y: 0 }, event: 'birth' },
     ],
     canvas: {
       cells: [
@@ -32,7 +32,7 @@ export const payload: IInput[] = [
     tick: 3,
     id: '1',
     ants: [
-      { id: 1, wasted: 0, age: 14, health: 7, payload: 1, point: { x: 1, y: 0 }, event: 'birth' },
+      { id: 1, wasted: 0, age: 14, health: 7, cargo: 1, point: { x: 1, y: 0 }, event: 'birth' },
     ],
     canvas: {
       cells: [
@@ -45,7 +45,7 @@ export const payload: IInput[] = [
     tick: 4,
     id: '1',
     ants: [
-      { id: 1, wasted: 0, age: 14, health: 7, payload: 4, point: { x: 1, y: 0 }, event: 'birth' },
+      { id: 1, wasted: 0, age: 14, health: 7, cargo: 4, point: { x: 1, y: 0 }, event: 'birth' },
     ],
     canvas: {
       cells: [

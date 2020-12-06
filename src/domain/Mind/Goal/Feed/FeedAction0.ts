@@ -8,7 +8,7 @@ import { EActionName } from '@domain/Game/Action';
 
 export class GoalFeedAction0 extends GoalAction {
   @computed get end() {
-    return this._ant.payload === 0 || Pathfinder.closest(this._ant.point, this._mother.area.listFood).distance <= GoalFeed.DISTANCE_NO_UNLOAD;
+    return this._ant.cargo === 0 || Pathfinder.closest(this._ant.point, this._mother.area.listFood).distance <= GoalFeed.DISTANCE_NO_PUT;
   }
 
   actionName(distance: number): EActionName {

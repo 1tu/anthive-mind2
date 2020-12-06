@@ -7,7 +7,7 @@ import { computed } from 'mobx';
 
 export class GoalGrowAction0 extends GoalAction {
   @computed get end() {
-    return this._ant.payload === Mother.config.PAYLOAD_MAX || !this._targetList.length;
+    return this._ant.cargo === Mother.config.CARGO_MAX || !this._targetList.length;
   }
 
   actionName(distance: number): EActionName {
