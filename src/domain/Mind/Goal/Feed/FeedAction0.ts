@@ -12,7 +12,7 @@ export class GoalFeedAction0 extends GoalAction {
   }
 
   actionName(distance: number): EActionName {
-    return EActionName.UNLOAD;
+    return EActionName.PUT;
   }
 
   isTargetValid(target?: Cell): boolean {

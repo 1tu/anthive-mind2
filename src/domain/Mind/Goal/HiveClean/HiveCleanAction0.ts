@@ -11,7 +11,7 @@ export class GoalHiveCleanAction0 extends GoalAction {
   }
 
   actionName(distance: number): EActionName {
-    return distance > 1 ? EActionName.MOVE : EActionName.LOAD;
+    return distance > 1 ? EActionName.MOVE : EActionName.TAKE;
   }
 
   isTargetValid(target?: Cell): boolean {

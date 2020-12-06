@@ -11,7 +11,7 @@ export class GoalGrowAction1 extends GoalAction {
   }
 
   actionName(distance: number): EActionName {
-    return distance > 1 ? EActionName.MOVE : EActionName.UNLOAD;
+    return distance > 1 ? EActionName.MOVE : EActionName.PUT;
   }
 
   isTargetValid(target?: Cell): boolean {

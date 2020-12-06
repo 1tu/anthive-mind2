@@ -15,6 +15,6 @@ export enum EActionName {
   STAY = 'stay',
   MOVE = 'move',
   EAT = 'eat',
-  LOAD = 'load',
-  UNLOAD = 'unload',
+  TAKE = 'take',
+  PUT = 'put',
 }
